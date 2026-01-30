@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCTiers – Live Rankings</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#0b1220;
+  color:white;
+}
+header{
+  padding:16px 24px;
+  background:#020617;
+  font-size:22px;
+  font-weight:900;
+}
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:20px;
+}
+.row{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  background:#020617;
+  border-radius:16px;
+  padding:14px;
+  margin-bottom:10px;
+}
+.rank{
+  width:36px;
+  text-align:center;
+  font-weight:900;
+}
+.head{
+  width:40px;
+  height:40px;
+  border-radius:8px;
+}
+.name{flex:1;font-weight:800}
+.region{
+  padding:6px 10px;
+  border-radius:8px;
+  font-size:12px;
+  font-weight:800;
+}
+.EU{background:#14532d}
+.NA{background:#7c2d12}
+.AS{background:#312e81}
+.points{opacity:.8}
+</style>
+</head>
+
+<body>
+
+<header>MCTIERS – LIVE OVERALL</header>
+
+<div class="container" id="ranking">Lade Daten…</div>
+
+<script>
+async function load(){
+  const res = await fetch("https://mctiers.com/api/v2/mode/overall?count=15")
+  const data = await res.json()
+  const div = document.getElementById("ranking")
+  div.innerHTML = ""
+
+  data.forEach((p,i)=>{
+    const row = document.createElement("div")
+    row.className = "row"
+    row.innerHTML = `
+      <div class="rank">${i+1}</div>
+      <img class="head" src="https://mc-heads.net/avatar/${p.name}/40">
+      <div class="name">${p.name}</div>
+      <div class="region ${p.region}">${p.region}</div>
+      <div class="points">${p.points} pts</div>
+    `
+    div.appendChild(row)
+  })
+}
+load()
+</script>
+
+</body>
+</html>
