@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCTIERS – Ranking</title>
+
+<style>
+:root{
+ --bg:#0b1220;--panel:#020617;--soft:#111827;
+ --gold:#facc15;--text:#e5e7eb;
+}
+body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 22px;background:var(--panel)}
+.logo{font-size:22px;font-weight:900;background:linear-gradient(90deg,#22c55e,#facc15);-webkit-background-clip:text;color:transparent}
+.gear{cursor:pointer;font-size:22px}
+
+.tabs{display:flex;gap:10px;justify-content:center;padding:16px;flex-wrap:wrap}
+.tabs button{padding:10px 16px;border-radius:999px;border:none;background:var(--soft);color:#cbd5f5;font-weight:800;cursor:pointer}
+.tabs button.active,.tabs button:hover{background:var(--gold);color:#020617}
+
+.container{max-width:1200px;margin:auto;padding:0 16px 140px}
+.row{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:18px;background:var(--panel);margin-bottom:10px;cursor:pointer;transition:.25s}
+.row:hover{transform:translateY(-3px) scale(1.01);box-shadow:0 15px 40px rgba(0,0,0,.4)}
+.rank{width:32px;font-weight:900}
+.head{width:42px;height:42px;border-radius:10px}
+.name{flex:1;font-weight:800}
+.tiers{display:flex;gap:8px;flex-wrap:wrap}
+
+.tier{
+ width:46px;height:46px;border-radius:50%;
+ display:flex;flex-direction:column;
+ align-items:center;justify-content:center;
+ font-size:10px;font-weight:900;
+ transition:.25s
+}
+.overall .tier:hover{
+ transform:scale(1.25);
+ box-shadow:0 0 18px rgba(250,204,21,.8)
+}
+
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;z-index:50}
+.modal{background:var(--panel);border-radius:22px;padding:22px;width:320px}
+.modal input{width:100%;padding:10px;margin-bottom:10px;border-radius:10px;border:none;background:var(--soft);color:white}
+.modal button{width:100%;padding:10px;border:none;border-radius:10px;background:var(--gold);font-weight:900;cursor:pointer}
+
+.HT1,.LT1{background:#facc15;color:#000}
+.HT2{background:#d1d5db;color:#000}
+.LT2{background:#9ca3af;color:#000}
+.HT3{background:#d6a36c;color:#000}
+.LT3{background:#8b5a2b;color:#fff}
+.HT4{background:#e5e7eb;color:#000}
+.LT4{background:#374151;color:#fff}
+.HT5,.LT5{background:#dc2626;color:#fff}
+</style>
+</head>
+
+<body>
+
+<header>
+ <div class="logo">MCTIERS</div>
+ <div class="gear" onclick="loginOverlay.style.display='flex'">⚙️</div>
+</header>
+
+<div class="tabs" id="tabs"></div>
+<div class="container" id="list"></div>
+
+<div class="overlay" id="loginOverlay">
+ <div class="modal">
+  <h3>Login</h3>
+  <input id="user" placeholder="Username">
+  <input id="pass" type="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+ </div>
+</div>
+
+<script>
+let role="guest"
+
+const ADMIN={u:"Splyx7_",p:"YOUSS2012"}
+const MEMBER={u:"MCTIERS",p:"MCTIERS"}
+
+const modes=["Overall","Sword","Axe","Mace","UHC","Netherite OP","Pot","SMP","Vanilla","Cart"]
+const icons={Sword:"🗡️",Axe:"🪓",Mace:"🔨",UHC:"❤️","Netherite OP":"💎",Pot:"🧪",SMP:"🌍",Vanilla:"🍃",Cart:"💣"}
+
+const players=[
+ {name:"Splyx7_",tiers:{Sword:"HT1",SMP:"HT2"}},
+ {name:"GurkusTheBird",tiers:{Sword:"LT2"}}
+]
+
+const tabs=document.getElementById("tabs")
+const list=document.getElementById("list")
+let current="Overall"
+
+modes.forEach(m=>{
+ const b=document.createElement("button")
+ b.textContent=(m==="Overall"?"🏆":icons[m])+" "+m
+ b.onclick=()=>{current=m;render()}
+ tabs.appendChild(b)
+})
+
+function login(){
+ if(user.value===ADMIN.u && pass.value===ADMIN.p){
+  role="admin"
+ }else if(user.value===MEMBER.u && pass.value===MEMBER.p){
+  role="member"
+ }else return
+ loginOverlay.style.display="none"
+ render()
+}
+
+function render(){
+ list.innerHTML=""
+ list.className="container "+(current==="Overall"?"overall":"")
+ players.forEach((p,i)=>{
+  const row=document.createElement("div")
+  row.className="row"
+  let tiers=""
+  if(role!=="guest"){
+   if(current==="Overall"){
+    for(let m in p.tiers){
+     tiers+=`<div class="tier ${p.tiers[m]}"><div>${icons[m]}</div><div>${p.tiers[m]}</div></div>`
+    }
+   }else if(p.tiers[current]){
+    tiers=`<div class="tier ${p.tiers[current]}"><div>${icons[current]}</div><div>${p.tiers[current]}</div></div>`
+   }
+  }
+  row.innerHTML=`<div class="rank">${i+1}</div><img class="head" src="https://mc-heads.net/avatar/${p.name}/64"><div class="name">${p.name}</div><div class="tiers">${tiers}</div>`
+  list.appendChild(row)
+ })
+}
+render()
+</script>
+
+</body>
+</html>
